@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+	<title>Login</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	<style>
+		body {
+			text-align: center;
+		}
+
+		form {
+			text-align: center;
+			min-width: 300px;
+		}
+	</style>
+</head>
+<body class="no-nav">
+	<form class="box box-w-h box-fit" method="post">
+		<h2 class="box-h">Login</h2>
+
+		Username: <input type="text" name="username" required /><br />
+		Password: <input type="password" name="password" required /><br />
+
+		<input type="submit" value="Login" />
+	</form>
+</body>
+</html>

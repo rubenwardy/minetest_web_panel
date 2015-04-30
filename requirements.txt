@@ -1,0 +1,4 @@
+# List of required libraries
+Flask>=0.10.1
+SQLAlchemy>=0.6
+Flask-SQLAlchemy>=2.0

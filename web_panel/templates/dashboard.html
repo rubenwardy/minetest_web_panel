@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ server.name }}{% endblock %}
+
+{% block content %}
+	<h1>{{ server.name }}</h1>
+
+	<a id="updown" class="{% if is_up %}up{% else %}down{% endif %}"></a>
+
+	<table class="box">
+		<tr>
+			<td>Name:</td>
+			<td>{{ server.name }}</td>
+		</tr>
+		<tr>
+			<td>Worldname:</td>
+			<td>{{ server.worldname }}</td>
+		</tr>
+		<tr>
+			<td>Port:</td>
+			<td>{{ server.port }}</td>
+		</tr>
+	</table>
+{% endblock %}

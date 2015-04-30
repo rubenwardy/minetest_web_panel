@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+	<title>{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body{% if not server %} class="no-nav"{% endif %}>
+	{% if server %}
+		<ul id="navbar">
+			<li><a href="{{ url_for('dashboard', sid=server.id) }}">Dashboard</a></li>
+			<li><a href="{{ url_for('dashboard', sid=server.id) }}">History</a></li>
+			<li><a href="{{ url_for('dashboard', sid=server.id) }}">Users</a></li>
+			<li><a href="{{ url_for('dashboard', sid=server.id) }}">Reports</a></li>
+		</ul>
+	{% endif %}
+
+	<main>
+		{% block content %}{% endblock %}
+	</main>
+</body>
+</html>

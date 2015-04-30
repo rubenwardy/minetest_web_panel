@@ -1,0 +1,5 @@
+*~*
+.directory
+config.cfg
+*.pyc
+*.sqlite

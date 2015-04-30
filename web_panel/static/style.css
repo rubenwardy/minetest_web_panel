@@ -1,0 +1,111 @@
+html, body {
+	font-family: "Arial", sans-serif;
+	padding: 0;
+	margin: 0;
+	background: #333;
+	color: #f0f0f0;
+}
+
+.no-nav main {
+	left: 0;
+}
+
+a {
+	color: #88f;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #bbf;
+	text-decoration: underline;
+}
+
+#navbar {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100px;
+	bottom: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: block;
+	background: #2A2A2A;
+}
+
+#navbar li {
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+#navbar li a {
+	display: block;
+	padding: 5px;
+	text-align: center;
+	color: #999;
+}
+
+main {
+	position: absolute;
+	left: 100px;
+	top: 0;
+	right: 0;
+}
+
+h1 {
+	margin: 0;
+	text-align: center;
+	margin: 0 0 5px 0;
+	padding: 0 0 5px 0;
+	display: block;
+	border-bottom: 1px solid #555;
+}
+
+input {
+	background: #3C3C3C;
+	border: 1px solid #555;
+	border-radius: 3px;
+	color: #f0f0f0;
+	padding: 3px;
+	margin: 5px;
+
+}
+
+.box {
+	margin: 5px;
+	background: #3C3C3C;
+	border: 1px solid #555;
+	border-radius: 3px;
+	padding: 5px;
+}
+
+.box-w-h h2 {
+	margin: 0 0 5px 0;
+	padding: 0 0 5px 0;
+	display: block;
+	border-bottom: 1px solid #555;
+}
+
+.box-fit {
+	display: inline-block;
+	margin-top: 10%;
+}
+
+#updown {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	display: block;
+	width: 30px;
+	height: 30px;
+	border-radius: 15px;
+}
+
+#updown.up {
+	background: green;
+}
+
+#updown.down {
+	background: red;
+}

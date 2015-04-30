@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Index{% endblock %}
+
+{% block content %}
+	<h1>Select a Server</h1>
+
+	<ul>
+		{% for server in servers %}
+			<li>
+				<a href="{{ url_for('dashboard', sid=server.id) }}">
+					{{ server.name }}
+				</a>
+			</li>
+		{% else %}
+			<li>
+				<i>No servers found.</i>
+			</li>
+		{% endfor %}
+	</ul>
+{% endblock %}

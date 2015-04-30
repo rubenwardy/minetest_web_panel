@@ -1,0 +1,4 @@
+SECRET_KEY = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+minetest_exe = '/home/rubenwardy/dev/minetest/bin/minetest'
+minetest_worlds = '/home/rubenwardy/dev/minetest/worlds/'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///data.sqlite'

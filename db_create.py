@@ -14,7 +14,7 @@ server = Server("Server 1", "servertest")
 db.session.add(server)
 
 db.session.add(ServerLogEntry(server, "plain", "Server was backed up", None))
-db.session.add(ServerLogEntry(server, "crash", "Server crashed :(", """
+db.session.add(ServerLogEntry(server, "error", "Server Crashed!", """
 17:04:28: ACTION[ServerThread]: singleplayer joins game. List of players: singleplayer
 zerr: invalid or incomplete deflate data
 17:04:28: ERROR[EmergeThread0]: Invalid block data in database (4,0,1) (SerializationError): decompressZlib: inflate failed

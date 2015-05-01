@@ -3,3 +3,4 @@ MINETEST_EXE = '/home/rubenwardy/dev/minetest/bin/minetest'
 MINETEST_EXE_PARAMS = ["--server"]
 MINETEST_WORLDS = '/home/rubenwardy/dev/minetest/worlds/'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///data.sqlite'
+CHECK_INTERVAL = 60

@@ -49,8 +49,8 @@ a:hover {
 main {
 	position: absolute;
 	left: 100px;
-	top: 0;
-	right: 0;
+	top: 47px;
+	right: 215px;
 }
 
 h1 {
@@ -144,11 +144,18 @@ input, .button {
 	border-radius: 3px;
 }
 
+.log li.error {
+	background: #3C0000;
+	border: 1px solid #500;
+}
+
 .log pre {
 	display: none;
+	background: #3C3C3C;
 	border: 1px solid #555;
 	border-radius: 3px;
 	padding: 3px;
+	margin: 5px 0 0 0;
 }
 
 .log li:hover pre {

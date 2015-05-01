@@ -35,18 +35,21 @@
 			<a class="button" href="{{ url_for('server_start', sid=server.id)}}">Start</a>
 		{% elif status != "blocked" %}
 			<a class="button" href="{{ url_for('server_stop', sid=server.id)}}">Stop</a>
+			<a class="button" href="{{ url_for('server_kill', sid=server.id)}}">Kill</a>
 			<a class="button" href="{{ url_for('server_start', sid=server.id)}}">Restart</a>
 		{% endif %}
 	</aside>
 
-	<ul class="log">
-		{% for entry in server.log %}
-		<li>
-			{{ entry.created }} {{ entry.title }}
-			{% if entry.additional %}
-				<pre><code>{{ entry.additional }}</code></pre>
-			{% endif %}
-		</li>
-		{% endfor %}
-	</ul>
+	<main>
+		<ul class="log">
+			{% for entry in server.log %}
+			<li class="{{ entry.mtype }}">
+				{{ entry.created.strftime('%Y-%m-%d %X') }} {{ entry.title }}
+				{% if entry.additional %}
+					<pre><code>{{ entry.additional }}</code></pre>
+				{% endif %}
+			</li>
+			{% endfor %}
+		</ul>
+	</main>
 {% endblock %}

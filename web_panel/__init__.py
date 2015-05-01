@@ -95,3 +95,14 @@ def server_stop(sid):
 
 	minetest.stop(server)
 	return redirect(url_for('dashboard', sid=sid))
+
+@app.route("/<sid>/kill/")
+@login_required
+def server_kill(sid):
+	server = models.Server.query.filter_by(id=sid).first()
+
+	if not server:
+		abort(404)
+
+	minetest.kill(server)
+	return redirect(url_for('dashboard', sid=sid))

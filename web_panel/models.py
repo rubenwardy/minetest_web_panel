@@ -61,7 +61,7 @@ class ServerLogEntry(db.Model):
 	id         = db.Column(db.Integer, primary_key=True)
 	title      = db.Column(db.String(80))
 	additional = db.Column(db.Text, nullable=True)
-	mtype      = db.Column(db.Enum('warning', 'crash', 'mod', 'plain', name='logtype'))
+	mtype      = db.Column(db.Enum('warning', 'error', 'mod', 'plain', name='logtype'))
 	serverId   = db.Column(db.Integer, db.ForeignKey('server.id'))
 	server     = db.relationship('Server', backref = db.backref('log', lazy='dynamic'))
 	created    = db.Column(db.DateTime)

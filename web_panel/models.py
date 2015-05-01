@@ -56,3 +56,21 @@ class Server(db.Model):
 
 	def getWorldPath(self):
 		return app.config['minetest_worlds'] + self.worldname
+
+class ServerLogEntry(db.Model):
+	id         = db.Column(db.Integer, primary_key=True)
+	title      = db.Column(db.String(80))
+	additional = db.Column(db.Text, nullable=True)
+	mtype      = db.Column(db.Enum('warning', 'crash', 'mod', 'plain', name='logtype'))
+	serverId   = db.Column(db.Integer, db.ForeignKey('server.id'))
+	server     = db.relationship('Server', backref = db.backref('log', lazy='dynamic'))
+	created    = db.Column(db.DateTime)
+
+	def __init__(self, server, mtype, title, additional):
+		self.server     = server
+		self.title      = title
+		if additional:
+			additional = additional.strip()
+		self.additional = additional
+		self.mtype      = mtype
+		self.created    = datetime.utcnow()

@@ -126,5 +126,31 @@ input, .button {
 	position: absolute;
 	top: 45px;
 	right: 2px;
-	width: 200px;
+	width: 190px;
+}
+
+.log, .log li {
+	list-style: none;
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+.log li {
+	padding: 5px;
+	margin: 3px;
+	background: #3C3C3C;
+	border: 1px solid #555;
+	border-radius: 3px;
+}
+
+.log pre {
+	display: none;
+	border: 1px solid #555;
+	border-radius: 3px;
+	padding: 3px;
+}
+
+.log li:hover pre {
+	display: block;
 }

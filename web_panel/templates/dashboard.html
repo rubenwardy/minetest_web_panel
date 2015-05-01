@@ -38,4 +38,15 @@
 			<a class="button" href="{{ url_for('server_start', sid=server.id)}}">Restart</a>
 		{% endif %}
 	</aside>
+
+	<ul class="log">
+		{% for entry in server.log %}
+		<li>
+			{{ entry.created }} {{ entry.title }}
+			{% if entry.additional %}
+				<pre><code>{{ entry.additional }}</code></pre>
+			{% endif %}
+		</li>
+		{% endfor %}
+	</ul>
 {% endblock %}

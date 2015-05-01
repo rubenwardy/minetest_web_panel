@@ -5,20 +5,37 @@
 {% block content %}
 	<h1>{{ server.name }}</h1>
 
-	<a id="updown" class="{% if is_up %}up{% else %}down{% endif %}"></a>
+	<a id="updown" class="{{ status }}"></a>
 
-	<table class="box">
-		<tr>
-			<td>Name:</td>
-			<td>{{ server.name }}</td>
-		</tr>
-		<tr>
-			<td>Worldname:</td>
-			<td>{{ server.worldname }}</td>
-		</tr>
-		<tr>
-			<td>Port:</td>
-			<td>{{ server.port }}</td>
-		</tr>
-	</table>
+	<aside id="server_details" class="box">
+		<table>
+			<tr>
+				<td>Name:</td>
+				<td>{{ server.name }}</td>
+			</tr>
+			<tr>
+				<td>Worldname:</td>
+				<td>{{ server.worldname }}</td>
+			</tr>
+			<tr>
+				<td>Port:</td>
+				<td>{{ server.port }}</td>
+			</tr>
+			<tr>
+				<td>Status:</td>
+				<td>{% if status == "blocked" %}
+						Port is blocked - another Minetest instance is running on this port.
+					{% else %}
+						{{ status }}
+					{% endif %}</td>
+			</tr>
+		</table>
+
+		{% if status == "off" %}
+			<a class="button" href="{{ url_for('server_start', sid=server.id)}}">Start</a>
+		{% elif status != "blocked" %}
+			<a class="button" href="{{ url_for('server_stop', sid=server.id)}}">Stop</a>
+			<a class="button" href="{{ url_for('server_start', sid=server.id)}}">Restart</a>
+		{% endif %}
+	</aside>
 {% endblock %}

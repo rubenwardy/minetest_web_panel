@@ -1,10 +1,9 @@
 from flask import *
 from flask import flash as push_message
-import minetest
 app = Flask(__name__)
 app.config.from_pyfile('../config.cfg')
 
-import models, functools
+import minetest, models, functools
 
 def login_required(func):
 	@functools.wraps(func)
@@ -69,7 +68,30 @@ def dashboard(sid):
 	if not server:
 		abort(404)
 
-	is_up = minetest.is_up("localhost", server.port)
+	status = minetest.status(server)
 
 	return render_template('dashboard.html', user=current_user,
-			server=server, is_up=is_up)
+			server=server, status=status)
+
+@app.route("/<sid>/start/")
+@login_required
+def server_start(sid):
+	server = models.Server.query.filter_by(id=sid).first()
+
+	if not server:
+		abort(404)
+
+	minetest.stop(server)
+	minetest.start(server)
+	return redirect(url_for('dashboard', sid=sid))
+
+@app.route("/<sid>/stop/")
+@login_required
+def server_stop(sid):
+	server = models.Server.query.filter_by(id=sid).first()
+
+	if not server:
+		abort(404)
+
+	minetest.stop(server)
+	return redirect(url_for('dashboard', sid=sid))

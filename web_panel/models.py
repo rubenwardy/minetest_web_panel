@@ -41,6 +41,7 @@ class Server(db.Model):
 	name      = db.Column(db.String(15), unique=True)
 	worldname = db.Column(db.String(30))
 	port      = db.Column(db.Integer, unique=True)
+	is_on     = db.Column(db.Boolean)
 
 	@validates('worldname')
 	def validate_worldname(self, key, address):

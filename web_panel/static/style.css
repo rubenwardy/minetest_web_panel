@@ -62,14 +62,17 @@ h1 {
 	border-bottom: 1px solid #555;
 }
 
-input {
+input, .button {
 	background: #3C3C3C;
 	border: 1px solid #555;
 	border-radius: 3px;
 	color: #f0f0f0;
 	padding: 3px;
 	margin: 5px;
+}
 
+.button {
+	display: inline-block;
 }
 
 .box {
@@ -102,10 +105,26 @@ input {
 	border-radius: 15px;
 }
 
-#updown.up {
+#updown.on {
 	background: green;
 }
 
-#updown.down {
+#updown.off {
+	background: transparent;
+	border: 1px solid #999;
+}
+
+#updown.crashed, #updown.blocked {
 	background: red;
+}
+
+#updown.starting {
+	background: orange;
+}
+
+#server_details {
+	position: absolute;
+	top: 45px;
+	right: 2px;
+	width: 200px;
 }

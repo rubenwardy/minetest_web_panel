@@ -21,15 +21,43 @@ def check_processes():
 	db.session.commit()
 
 class MinetestProcess:
-	def __init__(self, id, process, port):
+	def __init__(self, id, process, port, debuglog):
 		print("Server " + str(id) + " started!")
 		self.process = process
 		self.id = id
 		self.retval = None
 		self.port = port
+		self.debuglog = debuglog
 
 	def getEndOfLog(self):
-		return "last 20 lines of debug.txt will be here."
+		f = open(self.debuglog, "r")
+
+		# From http://tinyurl.com/36hfa5s
+		total_lines_wanted = app.config['DEBUG_N_LINES']
+		BLOCK_SIZE = 1024
+		f.seek(0, 2)
+		block_end_byte = f.tell()
+		lines_to_go = total_lines_wanted
+		block_number = -1
+		blocks = []
+		while lines_to_go > 0 and block_end_byte > 0:
+			if (block_end_byte - BLOCK_SIZE > 0):
+				# read the last block we haven't yet read
+				f.seek(block_number*BLOCK_SIZE, 2)
+				blocks.append(f.read(BLOCK_SIZE))
+			else:
+				# file too small, start from begining
+				f.seek(0,0)
+				# only read what was not read
+				blocks.append(f.read(block_end_byte))
+			lines_found = blocks[-1].count('\n')
+			lines_to_go -= lines_found
+			block_end_byte -= BLOCK_SIZE
+			block_number -= 1
+		all_read_text = ''.join(reversed(blocks))
+		lines = '\n'.join(all_read_text.splitlines()[-total_lines_wanted:])
+
+		return lines
 
 	def check(self):
 		if self.process is None:
@@ -78,7 +106,8 @@ def start(server):
 
 		# Start Process
 		proc = subprocess.Popen(params)
-		servers["sid_" + str(server.id)] = MinetestProcess(server.id, proc, server.port)
+		servers["sid_" + str(server.id)] = MinetestProcess(server.id, proc,\
+				server.port, debuglog)
 		server.is_on = True
 		db.session.commit()
 		return proc.poll() is None

@@ -1,8 +1,24 @@
+# Secret key for secure cookies
 SECRET_KEY = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
+# Location of Database
+SQLALCHEMY_DATABASE_URI = 'sqlite:///data.sqlite'
+
+# Paths to Minetest locations
 MINETEST_EXE = '/home/rubenwardy/dev/minetest/bin/minetest'
 MINETEST_EXE_PARAMS = ["--server"]
 MINETEST_WORLDS = '/home/rubenwardy/dev/minetest/worlds/'
-SQLALCHEMY_DATABASE_URI = 'sqlite:///data.sqlite'
+
+# Period, in seconds, between checking server status
 CHECK_INTERVAL = 60
+
+# How many lines to grab from log when the server crashes.
+DEBUG_N_LINES = 20
+
+# Only allows paths inside of MINETEST_WORLDS
+# Good if you are using this as a hosting panel for public use
+# (stops server owners interfering with each other)
 SANDBOX = True
+
+# If worldname doesn't exist, create it
 ALLOW_CREATE_WORLD = True

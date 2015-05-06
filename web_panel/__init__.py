@@ -118,6 +118,20 @@ def server_kill(sid):
 	minetest.kill(server)
 	return redirect(url_for('dashboard', sid=sid))
 
+@app.route("/<sid>/chat/")
+@login_required
+@ownership_required
+def chat(sid):
+	server = models.Server.query.filter_by(id=sid).first()
+
+	if not server:
+		abort(404)
+
+	status = minetest.status(server)
+
+	return render_template('chat.html', user=current_user,
+			server=server, status=status)
+
 
 def isDirSafe(ch):
 	return ch.isalpha() or ch.isdigit() or ch=='_' or ch=='-'

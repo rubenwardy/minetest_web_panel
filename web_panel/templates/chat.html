@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{{ server.name }}{% endblock %}
+
+{% block content %}
+	<h1>{{ server.name }} - Settings</h1>
+
+	<a id="updown" class="{{ status }}"></a>
+
+	<aside id="server_details" class="box">
+		Some stuff here
+	</aside>
+
+	<style>
+		.chatbox .messages {
+			height: 300px;
+			overflow: hidden;
+			background: #333;
+		}
+
+		.chatbox table {
+			width: 100%;
+		}
+
+		.chatbox tr td:nth-child(1) {
+			width: 120px;
+			text-align: right;
+			padding-right: 10px;
+		}
+
+		.chatbox .messages td {
+			border-bottom: 1px solid #444;
+			vertical-align: top;
+		}
+	</style>
+
+	<main>
+		<article class="chatbox box">
+			<div class="messages">
+				<table>
+					<tr><td>Player1</td><td>Hello? Anyone there?</td></tr>
+					<tr><td>Player2</td><td>Baah! sfl'jasdfnf df;n sdf f';nsdf
+					sdf; sdf;nsdf. sdf;klnsdf f;klnsdfg dfg;nf gg;ndfg. g;sdfg
+					sdg;n g;sndfg g;sgn vsd;fgn. sdf.gn .sdf;gnsd. fgsdfg.sdf  end</td></tr>
+				</table>
+			</div>
+			<div class="send_message">
+				<input type="text" id="msg">
+			</div>
+		<article>
+	</main>
+{% endblock %}

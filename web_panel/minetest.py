@@ -28,6 +28,12 @@ class MinetestProcess:
 		self.retval = None
 		self.port = port
 		self.debuglog = debuglog
+		self.chat = []
+
+	def _push_to_chat(self, msg):
+		while len(self.chat) > app.config['CHAT_BUFFER_SIZE']:
+			self.chat.pop(0)
+		self.chat.append(msg)
 
 	def getEndOfLog(self):
 		f = open(self.debuglog, "r")
@@ -75,6 +81,13 @@ class MinetestProcess:
 		print("Killing " + str(self.id))
 		self.process.terminate()
 
+def get_chat(server):
+	try:
+		mt = servers["sid_" + str(server.id)]
+		return mt.chat
+	except KeyError:
+		return []
+
 def start(server):
 	try:
 		mt = servers["sid_" + str(server.id)]
@@ -86,8 +99,8 @@ def start(server):
 		additional_params = app.config['MINETEST_EXE_PARAMS'] or []
 		for param in additional_params:
 			params.append(param)
-		params.append("--worldname")
-		params.append(server.worldname)
+		params.append("--world")
+		params.append(server.getWorldPath())
 		params.append("--logfile")
 		params.append(debuglog)
 		params.append("--port")

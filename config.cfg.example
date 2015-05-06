@@ -22,3 +22,7 @@ SANDBOX = True
 
 # If worldname doesn't exist, create it
 ALLOW_CREATE_WORLD = True
+
+# Number of recent chat messages kept in the memory.
+# Buffer is only kept whilst server is running.
+CHAT_BUFFER_SIZE = 20

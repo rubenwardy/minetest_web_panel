@@ -3,3 +3,4 @@
 config.cfg
 *.pyc
 *.sqlite
+data

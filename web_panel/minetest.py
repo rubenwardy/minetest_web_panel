@@ -53,6 +53,7 @@ def start(server):
 		return False
 	except KeyError:
 		# Build Parameters
+		debuglog = server.getDebugLogPath()
 		params = [app.config['MINETEST_EXE']]
 		additional_params = app.config['MINETEST_EXE_PARAMS'] or []
 		for param in additional_params:
@@ -60,9 +61,14 @@ def start(server):
 		params.append("--worldname")
 		params.append(server.worldname)
 		params.append("--logfile")
-		params.append(server.getDebugLogPath())
+		params.append(debuglog)
 		params.append("--port")
 		params.append(str(server.port))
+
+		# Create directories in debug path
+		import os
+		if not os.path.exists(os.path.dirname(debuglog)):
+			os.makedirs(os.path.dirname(debuglog))
 
 		# Debug: Print Parameters
 		outval = ""
@@ -70,6 +76,7 @@ def start(server):
 			outval += " " + param
 		print(outval.strip())
 
+		# Start Process
 		proc = subprocess.Popen(params)
 		servers["sid_" + str(server.id)] = MinetestProcess(server.id, proc, server.port)
 		server.is_on = True

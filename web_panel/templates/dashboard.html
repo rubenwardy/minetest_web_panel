@@ -25,6 +25,10 @@
 				<td>Status:</td>
 				<td>{% if status == "blocked" %}
 						Port is blocked - another Minetest instance is running on this port.
+					{% elif status == "no-connect" %}
+						Not accepting clients. (Probably still starting up)
+					{% elif status == "restart-required" %}
+						Restart required.
 					{% else %}
 						{{ status }}
 					{% endif %}</td>

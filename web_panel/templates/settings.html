@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ server.name }}{% endblock %}
+
+{% block content %}
+	<h1>{{ server.name }} - Settings</h1>
+
+	<a id="updown" class="{{ status }}"></a>
+
+	<aside id="server_details" class="box">
+		<table>
+			<tr>
+				<td>Sandboxing:</td>
+				<td>{% if config.SANDBOX %}On{% else %}Off{% endif %}</td>
+			</tr>
+			<tr>
+				<td>Check Interval:</td>
+				<td>{{ config.CHECK_INTERVAL }}</td>
+			</tr>
+		</table>
+		<i class="note">
+			These settings can only be changed in config.cfg
+		</i>
+	</aside>
+
+	<main>
+		<form method="post">
+			<fieldset class="box">
+				<legend>Server Properties</legend>
+
+				<table>
+					<tr>
+						<td>Server Name:</td>
+						<td>
+							<input type="text" name="name" value="{{ server.name }}" required />
+						</td>
+						<td>
+							Only letters, numbers, spaces and underscores are allowed.
+						</td>
+					</tr>
+					<tr>
+						<td>Port:</td>
+						<td>
+							<input type="text" name="port" value="{{ server.port or 30000 }}" />
+						</td>
+						<td>
+							Choose a port. Minetest usually uses port 30000.
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+
+
+			<fieldset class="box">
+				<legend>File System</legend>
+
+				<table>
+					<tr>
+						<td>Worldname:</td>
+						<td>
+							<input type="text" name="worldname" value="{{ server.worldname }}" required />
+						</td>
+						<td>
+							Requires restart.
+							{% if config.SANDBOX %}T{% else %}By default, t{% endif %}he
+							world is found in {{ config.MINETEST_WORLDS }}.
+							{% if config.ALLOW_CREATE_WORLD %}
+								<br />If it doesn't exist, a new world with that name will be created.
+							{% endif %}
+						</td>
+					</tr><tr>
+						<td>Debug Log:</td>
+						<td>
+							<input type="text" name="debug" value="{{ server.debuglog or 'debug.txt' }}" />
+						</td>
+						<td>
+							Requires restart.
+							{% if config.SANDBOX %}T{% else %}By default, t{% endif %}he
+							debug log file is saved in worlds/worldname/server/.
+							{% if config.SANDBOX %}
+								<br />Sandboxing is enabled, so only this folder can be used.
+							{% endif %}
+							<br />Current Path: {{ server.getDebugLogPath() }}
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+
+			<input type="submit" value="Save">
+		</form>
+	</main>
+{% endblock %}

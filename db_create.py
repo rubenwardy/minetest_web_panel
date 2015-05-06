@@ -42,3 +42,5 @@ zerr: invalid or incomplete deflate data
 """))
 
 db.session.commit()
+
+print("Database created.")

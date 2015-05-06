@@ -4,3 +4,5 @@ MINETEST_EXE_PARAMS = ["--server"]
 MINETEST_WORLDS = '/home/rubenwardy/dev/minetest/worlds/'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///data.sqlite'
 CHECK_INTERVAL = 60
+SANDBOX = True
+ALLOW_CREATE_WORLD = True

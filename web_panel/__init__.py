@@ -25,6 +25,13 @@ def login_required(func):
 		return func(*args, **kwargs)
 	return inner
 
+def ownership_required(func):
+	@functools.wraps(func)
+	def inner(*args, **kwargs):
+		# TODO: check that the user is authorised to manage this server
+		return func(*args, **kwargs)
+	return inner
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
 	r = request.args.get('r')
@@ -62,6 +69,7 @@ def index():
 
 @app.route("/<sid>/")
 @login_required
+@ownership_required
 def dashboard(sid):
 	server = models.Server.query.filter_by(id=sid).first()
 
@@ -75,6 +83,7 @@ def dashboard(sid):
 
 @app.route("/<sid>/start/")
 @login_required
+@ownership_required
 def server_start(sid):
 	server = models.Server.query.filter_by(id=sid).first()
 
@@ -87,6 +96,7 @@ def server_start(sid):
 
 @app.route("/<sid>/stop/")
 @login_required
+@ownership_required
 def server_stop(sid):
 	server = models.Server.query.filter_by(id=sid).first()
 
@@ -98,6 +108,7 @@ def server_stop(sid):
 
 @app.route("/<sid>/kill/")
 @login_required
+@ownership_required
 def server_kill(sid):
 	server = models.Server.query.filter_by(id=sid).first()
 
@@ -106,3 +117,56 @@ def server_kill(sid):
 
 	minetest.kill(server)
 	return redirect(url_for('dashboard', sid=sid))
+
+
+def isDirSafe(ch):
+	return ch.isalpha() or ch.isdigit() or ch=='_' or ch=='-'
+
+@app.route("/<sid>/settings/", methods=['GET', 'POST'])
+@login_required
+@ownership_required
+def settings(sid):
+	server = models.Server.query.filter_by(id=sid).first()
+
+	if not server:
+		abort(404)
+
+	status = minetest.status(server)
+
+	if request.method == "GET":
+		return render_template('settings.html', user=current_user,
+				server=server, status=status)
+	else:
+		# Get values
+		name = request.form['name'].strip()
+		port = request.form['port'].strip()
+		worldname = request.form['worldname'].strip()
+		debuglog = request.form['debug'].strip()
+
+		# Validate values
+		try:
+			port = int(port)
+			if port < 2 or port >= 65535:
+				port = server.port
+		except ValueError:
+			port = server.port
+		if not name or name == "" or not worldname or worldname == "":
+			return render_template('settings.html', user=current_user,
+					server=server, status=status)
+
+		# Strip bad characters out
+		name = ''.join(ch for ch in name if (ch.isalpha() or ch.isdigit()\
+		 		or ch==' ' or ch=='_')).strip()
+		if app.config['SANDBOX']:
+			worldname = ''.join(ch for ch in worldname if isDirSafe(ch)).strip()
+			debuglog = ''.join(ch for ch in debuglog if (isDirSafe(ch) or ch==".")).strip()
+
+		print(name, port, worldname, debuglog)
+
+		server.name = name
+		server.port = port
+		server.worldname = worldname
+		server.debuglog = debuglog
+		models.db.session.commit()
+
+		return redirect(url_for('dashboard', sid=sid))

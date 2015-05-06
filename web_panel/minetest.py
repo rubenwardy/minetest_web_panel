@@ -21,11 +21,12 @@ def check_processes():
 	db.session.commit()
 
 class MinetestProcess:
-	def __init__(self, id, process):
+	def __init__(self, id, process, port):
 		print("Server " + str(id) + " started!")
 		self.process = process
 		self.id = id
 		self.retval = None
+		self.port = port
 
 	def getEndOfLog(self):
 		return "last 20 lines of debug.txt will be here."
@@ -51,13 +52,26 @@ def start(server):
 		mt = servers["sid_" + str(server.id)]
 		return False
 	except KeyError:
-		params = [app.config['MINETEST_EXE'], "--worldname", server.worldname]
+		# Build Parameters
+		params = [app.config['MINETEST_EXE']]
 		additional_params = app.config['MINETEST_EXE_PARAMS'] or []
 		for param in additional_params:
 			params.append(param)
+		params.append("--worldname")
+		params.append(server.worldname)
+		params.append("--logfile")
+		params.append(server.getDebugLogPath())
+		params.append("--port")
+		params.append(str(server.port))
+
+		# Debug: Print Parameters
+		outval = ""
+		for param in params:
+			outval += " " + param
+		print(outval.strip())
 
 		proc = subprocess.Popen(params)
-		servers["sid_" + str(server.id)] = MinetestProcess(server.id, proc)
+		servers["sid_" + str(server.id)] = MinetestProcess(server.id, proc, server.port)
 		server.is_on = True
 		db.session.commit()
 		return proc.poll() is None
@@ -104,17 +118,23 @@ def socket_is_up(address, port):
 def status(server):
 	check_processes()
 
-	is_up = socket_is_up("localhost", server.port)
-
 	try:
 		mt = servers["sid_" + str(server.id)]
+
 		if mt and mt.check():
+			is_up = socket_is_up("localhost", mt.port)
 			if is_up:
-				return "on"
+				if mt.port != server.port:
+					return "restart-required"
+				else:
+					return "on"
 			else:
-				return "starting"
+				return "no-connect"
 	except KeyError:
 		pass
+
+
+	is_up = socket_is_up("localhost", server.port)
 
 	if is_up:
 		return "blocked"

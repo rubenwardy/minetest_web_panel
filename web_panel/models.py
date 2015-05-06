@@ -40,6 +40,7 @@ class Server(db.Model):
 	id        = db.Column(db.Integer, primary_key=True)
 	name      = db.Column(db.String(15), unique=True)
 	worldname = db.Column(db.String(30))
+	debuglog  = db.Column(db.String(30))
 	port      = db.Column(db.Integer, unique=True)
 	is_on     = db.Column(db.Boolean)
 
@@ -52,10 +53,23 @@ class Server(db.Model):
 	def __init__(self, name, worldname):
 		self.name = name
 		self.worldname = worldname
+		self.debuglog = "debug.txt"
 		self.port = 30000
 
 	def getWorldPath(self):
-		return app.config['minetest_worlds'] + self.worldname
+		return app.config['MINETEST_WORLDS'] + self.worldname
+
+	def getDebugLogPath(self):
+		import os
+
+		log = self.debuglog or "debug.txt"
+		if app.config['SANDBOX']:
+			log = os.path.normpath('/' + log).lstrip('/')
+			log = os.path.join(self.getWorldPath(), "server", log)
+			return log
+		else:
+			log = os.path.join(self.getWorldPath(), "server", log)
+			return log
 
 class ServerLogEntry(db.Model):
 	id         = db.Column(db.Integer, primary_key=True)

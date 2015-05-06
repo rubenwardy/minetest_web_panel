@@ -118,8 +118,12 @@ input, .button {
 	background: red;
 }
 
-#updown.starting {
+#updown.no-connect {
 	background: orange;
+}
+
+#updown.restart-required {
+	background: blue;
 }
 
 #server_details {
@@ -160,4 +164,9 @@ input, .button {
 
 .log li:hover pre {
 	display: block;
+}
+
+.note, form table td:nth-child(3) {
+	font-size: 80%;
+	color: #d0d0d0;
 }

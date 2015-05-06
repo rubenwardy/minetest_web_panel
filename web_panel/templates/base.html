@@ -7,10 +7,9 @@
 <body{% if not server %} class="no-nav"{% endif %}>
 	{% if server %}
 		<ul id="navbar">
+			<li><a href="{{ url_for('index') }}">&larr; Servers</a></li>
 			<li><a href="{{ url_for('dashboard', sid=server.id) }}">Dashboard</a></li>
-			<li><a href="{{ url_for('dashboard', sid=server.id) }}">History</a></li>
-			<li><a href="{{ url_for('dashboard', sid=server.id) }}">Users</a></li>
-			<li><a href="{{ url_for('dashboard', sid=server.id) }}">Reports</a></li>
+			<li><a href="{{ url_for('settings', sid=server.id) }}" >Settings</a></li>
 		</ul>
 	{% endif %}
 

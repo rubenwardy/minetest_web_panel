@@ -17,5 +17,6 @@ But if you're interested:
 	$ python db_create.py
 	$ python run.py
 
+Copy config.cfg.example to config.cfg. Point the settings to your minetest, etc.
 Go to http://localhost:5000/.
 The username will be 'admin' and the password 'pass'

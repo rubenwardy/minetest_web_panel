@@ -61,7 +61,14 @@ class MinetestProcess:
 			block_end_byte -= BLOCK_SIZE
 			block_number -= 1
 		all_read_text = ''.join(reversed(blocks))
-		lines = '\n'.join(all_read_text.splitlines()[-total_lines_wanted:])
+		lines = all_read_text.splitlines()
+		for i, line in enumerate(reversed(lines)):
+			if line.strip() == "Separator":
+				lines = lines[-i+1:]
+				break
+		while len(lines) > 0 and lines[0].strip() == "":
+			lines.pop(0)
+		lines = '\n'.join(lines[-total_lines_wanted:])
 
 		return lines
 

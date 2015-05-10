@@ -46,6 +46,12 @@ a:hover {
 	color: #999;
 }
 
+code {
+	display: block;
+	word-wrap: break-word;
+	overflow: hidden;
+}
+
 main {
 	position: absolute;
 	left: 100px;

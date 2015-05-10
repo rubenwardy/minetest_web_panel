@@ -46,7 +46,7 @@
 
 	<main>
 		<ul class="log">
-			{% for entry in server.log %}
+			{% for entry in log %}
 			<li class="{{ entry.mtype }}">
 				{{ entry.created.strftime('%Y-%m-%d %X') }} {{ entry.title }}
 				{% if entry.additional %}

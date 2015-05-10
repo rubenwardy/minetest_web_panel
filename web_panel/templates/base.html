@@ -10,6 +10,8 @@
 			<li><a href="{{ url_for('index') }}">&larr; Servers</a></li>
 			<li><a href="{{ url_for('dashboard', sid=server.id) }}">Dashboard</a></li>
 			<li><a href="{{ url_for('settings', sid=server.id) }}" >Settings</a></li>
+			<li><a href="{{ url_for('chat', sid=server.id) }}" >Chat</a></li>
+			<li><a href="{{ url_for('debuglog', sid=server.id) }}" >DebugLog</a></li>
 		</ul>
 	{% endif %}
 

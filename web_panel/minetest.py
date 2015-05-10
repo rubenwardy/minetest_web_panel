@@ -1,7 +1,19 @@
 from web_panel import app
 from web_panel.models import db, Server, ServerLogEntry
-import subprocess
+import subprocess, atexit
+
+
+
 servers = {}
+
+def on_exit():
+	print("minetest.on_exit() : Shutting down...")
+
+	for _, server in servers.iteritems():
+		server.kill()
+
+
+atexit.register(on_exit)
 
 def check_processes():
 	print("Checking servers!")
@@ -35,11 +47,21 @@ class MinetestProcess:
 			self.chat.pop(0)
 		self.chat.append(msg)
 
-	def getEndOfLog(self):
-		f = open(self.debuglog, "r")
+	def getEndOfLog(self, lines=None, inc_all_sessions=False):
+
+		log_blacklist = [
+			"        .__               __                   __",
+			"_____ |__| ____   _____/  |_  ____   _______/  |_",
+			"/     \|  |/    \_/ __ \   __\/ __ \ /  ___/\   __\\",
+			"|  Y Y  \  |   |  \  ___/|  | \  ___/ \___ \  |  |",
+			"|__|_|  /__|___|  /\___  >__|  \___  >____  > |__|",
+			"  \/        \/     \/          \/     \/  "
+		]
 
 		# From http://tinyurl.com/36hfa5s
-		total_lines_wanted = app.config['DEBUG_N_LINES']
+		total_lines_wanted = lines or app.config['DEBUG_N_LINES']
+		print("Getting " + str(total_lines_wanted) + " from debug.txt")
+		f = open(self.debuglog, "r")
 		BLOCK_SIZE = 1024
 		f.seek(0, 2)
 		block_end_byte = f.tell()
@@ -62,12 +84,20 @@ class MinetestProcess:
 			block_number -= 1
 		all_read_text = ''.join(reversed(blocks))
 		lines = all_read_text.splitlines()
-		for i, line in enumerate(reversed(lines)):
-			if line.strip() == "Separator":
-				lines = lines[-i+1:]
-				break
+		if not inc_all_sessions:
+			for i, line in enumerate(reversed(lines)):
+				if line.strip() == "Separator":
+					lines = lines[-i+1:]
+					break
 		while len(lines) > 0 and lines[0].strip() == "":
 			lines.pop(0)
+
+		def is_ok(line):
+			for black in log_blacklist:
+				if black in line:
+					return False
+			return True
+		lines = [line for line in lines if is_ok(line)]
 		lines = '\n'.join(lines[-total_lines_wanted:])
 
 		return lines
@@ -94,6 +124,13 @@ def get_chat(server):
 		return mt.chat
 	except KeyError:
 		return []
+
+def get_log(server, lines, inc_all_sessions):
+	try:
+		mt = servers["sid_" + str(server.id)]
+		return mt.getEndOfLog(lines, inc_all_sessions)
+	except KeyError:
+		return None
 
 def start(server):
 	try:

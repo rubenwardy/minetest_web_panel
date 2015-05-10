@@ -1,5 +1,7 @@
 from flask import *
 from flask import flash as push_message
+from sqlalchemy import desc
+
 app = Flask(__name__)
 app.config.from_pyfile('../config.cfg')
 
@@ -78,8 +80,27 @@ def dashboard(sid):
 
 	status = minetest.status(server)
 
+	log = models.ServerLogEntry.query.filter_by(server=server).\
+			order_by(desc(models.ServerLogEntry.created)).limit(10).all()
+
 	return render_template('dashboard.html', user=current_user,
-			server=server, status=status)
+			server=server, status=status, log=log)
+
+@app.route("/<sid>/debuglog/")
+@login_required
+@ownership_required
+def debuglog(sid):
+	n = int(request.args.get('n') or 30)
+	i = request.args.get('i')
+	server = models.Server.query.filter_by(id=sid).first()
+
+	if not server:
+		abort(404)
+
+	status = minetest.status(server)
+
+	return render_template('debuglog.html', user=current_user,
+			server=server, status=status, debuglog=minetest.get_log(server, n, i), n=n, inc=i)
 
 @app.route("/<sid>/start/")
 @login_required

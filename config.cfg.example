@@ -1,6 +1,12 @@
 # Secret key for secure cookies
 SECRET_KEY = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
+# HTTP Address for Panel
+ADDRESS = "localhost"
+
+# HTTP Port for Panel
+PORT = 5000
+
 # Location of Database
 SQLALCHEMY_DATABASE_URI = 'sqlite:///data.sqlite'
 
@@ -27,8 +33,8 @@ ALLOW_CREATE_WORLD = True
 # Buffer is only kept whilst server is running.
 CHAT_BUFFER_SIZE = 20
 
-# HTTP Port
-PORT = 5000
-
-# Socket server should NOT be port forwarded
-SOCKET_SERVER_PORT = 5001
+# Command Delivery Method
+#   Specify the mechanism used to send chat messages and commands to the server.
+#   "get-api" is currently the only option.
+#      It makes minetest access /api/ on the panel's server
+CMD_DELIVERY_METHOD = "get-api"

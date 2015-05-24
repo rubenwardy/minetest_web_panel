@@ -2,7 +2,8 @@ from flask import *
 from flask import flash as push_message
 from sqlalchemy import desc
 from web_panel import app
-import minetest, models, functools, views
+import minetest, minetest_mech_http
+import models, functools, views
 
 def login_required(func):
 	@functools.wraps(func)
@@ -136,7 +137,7 @@ def server_kill(sid):
 	minetest.kill(server)
 	return redirect(url_for('dashboard', sid=sid))
 
-@app.route("/<sid>/chat/")
+@app.route("/<sid>/chat/", methods=['GET', 'POST'])
 @login_required
 @ownership_required
 def chat(sid):
@@ -147,8 +148,13 @@ def chat(sid):
 
 	status = minetest.status(server)
 
-	return render_template('chat.html', user=current_user,
-			server=server, status=status)
+	if request.method == "GET":
+		return render_template('chat.html', user=current_user,
+				server=server, status=status)
+	else:
+		msg = request.form['msg']
+		minetest.send_chat_or_cmd(server, current_user.username, msg)
+		return redirect(url_for('chat', sid=sid))
 
 
 def isDirSafe(ch):

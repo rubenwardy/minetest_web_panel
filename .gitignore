@@ -4,3 +4,4 @@ config.cfg
 *.pyc
 *.sqlite
 data
+debug.txt

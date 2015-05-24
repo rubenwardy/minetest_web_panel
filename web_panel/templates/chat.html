@@ -35,18 +35,29 @@
 	</style>
 
 	<main>
-		<article class="chatbox box">
-			<div class="messages">
-				<table>
-					<tr><td>Player1</td><td>Hello? Anyone there?</td></tr>
-					<tr><td>Player2</td><td>Baah! sfl'jasdfnf df;n sdf f';nsdf
-					sdf; sdf;nsdf. sdf;klnsdf f;klnsdfg dfg;nf gg;ndfg. g;sdfg
-					sdg;n g;sndfg g;sgn vsd;fgn. sdf.gn .sdf;gnsd. fgsdfg.sdf  end</td></tr>
-				</table>
+		{% if status != "on" %}
+			<div class="box">
+				The server needs to be online for chat to work.<br />
+
+				<a class="button" href="{{ url_for('server_start', sid=server.id)}}">Start</a>
 			</div>
-			<div class="send_message">
-				<input type="text" id="msg">
-			</div>
-		<article>
+		{% else %}
+			<article class="chatbox box">
+				<div class="messages">
+					<table>
+						<tr><td>Player1</td><td>Hello? Anyone there?</td></tr>
+						<tr><td>Player2</td><td>Baah! sfl'jasdfnf df;n sdf f';nsdf
+						sdf; sdf;nsdf. sdf;klnsdf f;klnsdfg dfg;nf gg;ndfg. g;sdfg
+						sdg;n g;sndfg g;sgn vsd;fgn. sdf.gn .sdf;gnsd. fgsdfg.sdf  end</td></tr>
+					</table>
+				</div>
+				<div class="send_message">
+					<form method="post">
+						<input type="text" id="msg" name="msg">
+						<input type="submit" value="Send">
+					</form>
+				</div>
+			<article>
+		{% endif %}
 	</main>
 {% endblock %}

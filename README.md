@@ -13,10 +13,22 @@ Installation
 This software isn't really ready to be used quite yet.
 But if you're interested:
 
+	# Install requirements
 	$ pip install -r requirements.txt
-	$ python db_create.py
-	$ python run.py
+	$ sudo apt-get install luarocks
+	$ sudo luarocks install luasocket
 
-Copy config.cfg.example to config.cfg. Point the settings to your minetest, etc.
-Go to http://localhost:5000/.
-The username will be 'admin' and the password 'pass'
+	# Setup database
+	$ python db_create.py
+
+	# Setup configuration
+	$ cp config.cfg.example config.cfg
+
+	# now edit config.cfg to point to your Minetest exe, etc!
+
+Running
+=======
+
+* `$ python run.py`
+* Go to <http://localhost:5000/>.
+* The default username is 'admin' and the password 'pass'

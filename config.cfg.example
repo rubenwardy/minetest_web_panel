@@ -35,6 +35,12 @@ CHAT_BUFFER_SIZE = 20
 
 # Command Delivery Method
 #   Specify the mechanism used to send chat messages and commands to the server.
-#   "get-api" is currently the only option.
+#   "http" is currently the only option.
 #      It makes minetest access /api/ on the panel's server
-CMD_DELIVERY_METHOD = "get-api"
+CMD_DELIVERY_METHOD = "http"
+
+# For HTTP mechanism, timeout.
+HTTP_SYNC_TIMEOUT = 10
+
+# For HTTP mechanism, sync interval. Seconds
+HTTP_SYNC_INTERVAL = 3

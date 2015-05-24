@@ -84,6 +84,25 @@ def dashboard(sid):
 	return render_template('dashboard.html', user=current_user,
 			server=server, status=status, log=log)
 
+@app.route("/<sid>/clear_logs/")
+@login_required
+@ownership_required
+def clear_logs(sid):
+	server = models.Server.query.filter_by(id=sid).first()
+
+	if not server:
+		abort(404)
+
+	status = minetest.status(server)
+
+	res = models.ServerLogEntry.query.filter_by(server=server)
+	for item in res:
+		models.db.session.delete(item)
+
+	models.db.session.commit()
+
+	return redirect(url_for('dashboard', sid=sid))
+
 @app.route("/<sid>/debuglog/")
 @login_required
 @ownership_required

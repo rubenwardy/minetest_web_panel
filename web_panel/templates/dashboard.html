@@ -45,6 +45,10 @@
 	</aside>
 
 	<main>
+		{% if log %}
+		<a class="button" href="{{ url_for('clear_logs', sid=server.id) }}">Clear Notifications</a>
+		{% endif %}
+
 		<ul class="log">
 			{% for entry in log %}
 			<li class="{{ entry.mtype }}">

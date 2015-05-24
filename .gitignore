@@ -2,6 +2,6 @@
 .directory
 config.cfg
 *.pyc
-*.sqlite
+*.sqlite*
 data
 debug.txt

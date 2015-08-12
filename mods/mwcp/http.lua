@@ -15,10 +15,14 @@ local function init(iprocess_frompanel, data)
 	sync_interval = data.sync_interval
 
 	-- Include modules
-	local ie = minetest.request_insecure_environment()
-	if not ie then
-		error("Insecure environment required!")
+	local ie = _G
+	if minetest.request_insecure_environment then
+		ie = minetest.request_insecure_environment()
+		if not ie then
+			error("Insecure environment required!")
+		end
 	end
+
 	http  = ie.require("socket.http")
 	ltn12 = ie.require("ltn12")
 	http.TIMEOUT = sync_timeout

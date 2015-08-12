@@ -44,7 +44,7 @@ local function init()
 	-- Get startup data from webpanel
 	local f = io.open(minetest.get_worldpath() .. "/webpanel.txt", "r")
 	local data = minetest.deserialize(f:read("*all"))
-	f.close()
+	f:close()
 	sync_interval = data.sync_interval
 	mech.init(process_frompanel, data)
 end

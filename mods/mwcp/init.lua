@@ -28,6 +28,12 @@ local function process_frompanel(data)
 			else
 				minetest.chat_send_all("<" .. item.username .. "> " .. item.content)
 			end
+		elseif item.mode == "cmd" then
+			if item.content:sub(1, 1) == "/" then
+				run_command(item.username, item.content:sub(2))
+			else
+				run_command(item.username, item.content)
+			end
 		end
 	end
 end

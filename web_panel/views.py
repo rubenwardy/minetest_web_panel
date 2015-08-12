@@ -128,7 +128,7 @@ def server_start(sid):
 	if not server:
 		abort(404)
 
-	minetest.stop(server)
+	minetest.kill(server)
 	minetest.start(server)
 	return redirect(url_for('dashboard', sid=sid))
 
@@ -141,7 +141,7 @@ def server_stop(sid):
 	if not server:
 		abort(404)
 
-	minetest.stop(server)
+	minetest.stop(server, current_user.username)
 	return redirect(url_for('dashboard', sid=sid))
 
 @app.route("/<sid>/kill/")

@@ -133,6 +133,13 @@ class MinetestProcess:
 		print("Killing " + str(self.id))
 		self.process.terminate()
 
+	def stop(self, username):
+		self.send({
+			"mode": "cmd",
+			"username": username,
+			"content": "shutdown"
+		})
+
 	def send(self, tosend):
 		self.toserver.append(tosend)
 
@@ -237,15 +244,21 @@ def start(server):
 		db.session.commit()
 		return proc.poll() is None
 
-def stop(server):
-	# TODO: send /shutdown command, don't kill it
-	kill(server)
+def stop(server, username):
+	try:
+		mt = servers["sid_" + str(server.id)]
+
+		if mt and mt.check():
+			mt.stop(username)
+
+	except KeyError:
+		pass
 
 def kill(server):
 	try:
 		mt = servers["sid_" + str(server.id)]
 
-		if mt.check():
+		if mt and mt.check():
 			mt.kill()
 			server.is_on = False
 			db.session.commit()

@@ -1,4 +1,4 @@
-local function run_command(name, args)
+local function run_command(name, args, sudo)
 	if args == "" then
 		return false, "You need a command."
 	end
@@ -10,10 +10,10 @@ local function run_command(name, args)
 	if not command then
 		return false, "Not a valid command."
 	end
-	if not minetest.check_player_privs(name, command.privs) then
+	if not sudo and not minetest.check_player_privs(name, command.privs) then
 		return false, "Your privileges are insufficient."
 	end
-	minetest.log("action", name.."@IRC runs "..args)
+	minetest.log("action", name.."@WebPanel runs "..args)
 	return command.func(name, (params or ""))
 end
 
@@ -33,6 +33,12 @@ local function process_frompanel(data)
 				run_command(item.username, item.content:sub(2))
 			else
 				run_command(item.username, item.content)
+			end
+		elseif item.mode == "cmd_sudo" then
+			if item.content:sub(1, 1) == "/" then
+				run_command(item.username, item.content:sub(2), true)
+			else
+				run_command(item.username, item.content, true)
 			end
 		end
 	end

@@ -135,7 +135,7 @@ class MinetestProcess:
 
 	def stop(self, username):
 		self.send({
-			"mode": "cmd",
+			"mode": "cmd_sudo",
 			"username": username,
 			"content": "shutdown"
 		})

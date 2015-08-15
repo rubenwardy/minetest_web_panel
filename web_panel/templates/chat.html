@@ -42,13 +42,18 @@
 				<a class="button" href="{{ url_for('server_start', sid=server.id)}}">Start</a>
 			</div>
 		{% else %}
+		<script type="text/javascript" src="{{ url_for('static', filename='ajax.js') }}"></script>
+		<script type="text/javascript">
+			$( "document" ).ready(start_ajax({{ server.id }}))
+		</script>
 			<article class="chatbox box">
 				<div class="messages">
-					<table>
-						<tr><td>Player1</td><td>Hello? Anyone there?</td></tr>
-						<tr><td>Player2</td><td>Baah! sfl'jasdfnf df;n sdf f';nsdf
-						sdf; sdf;nsdf. sdf;klnsdf f;klnsdfg dfg;nf gg;ndfg. g;sdfg
-						sdg;n g;sndfg g;sgn vsd;fgn. sdf.gn .sdf;gnsd. fgsdfg.sdf  end</td></tr>
+					<table class="view">
+						{% for entry in entries %}
+							<tr><td>{{ entry.username }}</td><td>{{ entry.message }}</td></tr>
+						{% else %}
+							<tr><td></td><td>No messages.</td></tr>
+						{% endfor %}
 					</table>
 				</div>
 				<div class="send_message">

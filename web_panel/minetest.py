@@ -1,5 +1,5 @@
 from web_panel import app
-from web_panel.models import db, Server, ServerLogEntry
+from web_panel.models import db, Server, ServerLogEntry, ServerChatEntry
 import subprocess, atexit
 
 servers = {}
@@ -57,10 +57,10 @@ class MinetestProcess:
 		self.key = key
 		self.toserver = []
 
-	def _push_to_chat(self, msg):
+	def push_to_chat(self, username, msg):
 		while len(self.chat) > app.config['CHAT_BUFFER_SIZE']:
 			self.chat.pop(0)
-		self.chat.append(msg)
+		self.chat.append({"username": username, "message": msg})
 
 	def getEndOfLog(self, lines=None, inc_all_sessions=False):
 
@@ -166,6 +166,13 @@ class MinetestProcess:
 			"content": msg
 		})
 
+	def process_data(self, data, server):
+		if data["type"] == "chat":
+			entry = ServerChatEntry(server, data["name"], data["message"])
+			db.session.add(entry)
+			db.session.commit()
+			self.push_to_chat(data["name"], data["message"])
+
 
 
 #
@@ -174,6 +181,13 @@ class MinetestProcess:
 #    Called by views etc
 #
 #
+
+def get_minetest_process(sid):
+	key = "sid_" + str(sid)
+	if key in servers:
+		return servers[key]
+	else:
+		return False
 
 def start(server):
 	try:

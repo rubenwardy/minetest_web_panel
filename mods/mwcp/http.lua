@@ -28,6 +28,40 @@ local function init(iprocess_frompanel, data)
 	http.TIMEOUT = sync_timeout
 end
 
+local function validate_response(code, resp)
+	if code ~= 200 then
+		if code == 404 then
+			minetest.log("warning", "The webpanel reports that this server does not exist!")
+		else
+			minetest.log("warning", "The webpanel gave an unknown HTTP response code!")
+		end
+		return false
+	end
+
+	if resp and resp[1] then
+		resp = resp[1]:trim()
+	else
+		return false
+	end
+
+	if resp == "auth" then
+		minetest.log("warning", "Authentication error when requesting commands from webpanel")
+		return false
+	end
+
+	if resp == "offline" then
+		minetest.log("warning", "The webpanel reports that this server should be offline!")
+		return false
+	end
+
+	if string.find(resp, "return", 1) == nil then
+		minetest.log("warning", "The webpanel gave an invalid response!")
+		print(dump(resp))
+		return false
+	end
+	return true
+end
+
 local function sync()
 	local host   = webpanel_host .. "/"
 	local method = "get"
@@ -50,41 +84,32 @@ local function sync()
 	-- headers=args.headers, source=args.source,
 	-- step=args.step, proxy=args.proxy, redirect=args.redirect, create=args.create
 
-	if code ~= 200 then
-		if code == 404 then
-			minetest.log("warning", "The webpanel reports that this server does not exist!")
-		else
-			minetest.log("warning", "The webpanel gave an unknown HTTP response code!")
-		end
-		return
-	end
-
-	if resp and resp[1] then
+	if validate_response(code, resp) then
 		resp = resp[1]:trim()
-	else
-		resp = nil
+		process_frompanel(minetest.deserialize(resp))
 	end
+end
 
-	if resp == "auth" then
-		minetest.log("warning", "Authentication error when requesting commands from webpanel")
-		return
-	end
+local function send(data)
+	local host   = webpanel_host .. "/"
+	local method = "post"
+	local path   = "api/" .. auth_key .. "/" .. server_id .. "/server_update/"
+	local resp   = {}
+	local url = host .. path
+	local headers = {}
+	headers['Content-Length'] = #'data=' + #data
+	headers['Content-Type'] = 'application/x-www-form-urlencoded'
+	local sink = ltn12.sink.table(resp)
+	local source = ltn12.source.string('data=' .. data)
 
-	if resp == "offline" then
-		minetest.log("warning", "The webpanel reports that this server should be offline!")
-		return
-	end
+	local client, code, headers, status = http.request({url=url, sink=sink, source=source,
+	 	method=method, headers=headers})
 
-	if string.find(resp, "return", 1) == nil then
-		minetest.log("warning", "The webpanel gave an invalid response!")
-		print(dump(resp))
-		return
-	end
-
-	process_frompanel(minetest.deserialize(resp))
+	validate_response(code, resp)
 end
 
 return {
 	init = init,
-	sync = sync
+	sync = sync,
+	send = send
 }

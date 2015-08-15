@@ -88,3 +88,17 @@ class ServerLogEntry(db.Model):
 		self.additional = additional
 		self.mtype      = mtype
 		self.created    = datetime.utcnow()
+
+class ServerChatEntry(db.Model):
+	id         = db.Column(db.Integer, primary_key=True)
+	username   = db.Column(db.String(80))
+	message    = db.Column(db.Text, nullable=True)
+	serverId   = db.Column(db.Integer, db.ForeignKey('server.id'))
+	server     = db.relationship('Server', backref = db.backref('chat', lazy='dynamic'))
+	created    = db.Column(db.DateTime)
+
+	def __init__(self, server, username, message):
+		self.server     = server
+		self.username   = username
+		self.message    = message
+		self.created    = datetime.utcnow()

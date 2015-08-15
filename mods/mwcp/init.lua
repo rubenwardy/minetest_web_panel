@@ -44,6 +44,11 @@ local function process_frompanel(data)
 	end
 end
 
+local function handle_chat(name, message)
+	local chat = {type = "chat",name = name, message = message}
+	mech.send(minetest.write_json(chat))
+end
+
 local mech = dofile(minetest.get_modpath("mwcp") .. "/http.lua")
 local sync_interval = nil
 local function init()
@@ -61,3 +66,4 @@ local function updatetick()
 	minetest.after(sync_interval, updatetick)
 end
 minetest.after(sync_interval, updatetick)
+minetest.register_on_chat_message(handle_chat)

@@ -26,7 +26,7 @@ local function process_frompanel(data)
 			if item.content:sub(1, 1) == "/" then
 				run_command(item.username, item.content:sub(2))
 			else
-				minetest.chat_send_all("<" .. item.username .. "> " .. item.content)
+				minetest.chat_send_all("<" .. item.username .. "@WebPanel> " .. item.content)
 			end
 		elseif item.mode == "cmd" then
 			if item.content:sub(1, 1) == "/" then
@@ -44,11 +44,6 @@ local function process_frompanel(data)
 	end
 end
 
-local function handle_chat(name, message)
-	local chat = {type = "chat",name = name, message = message}
-	mech.send(minetest.write_json(chat))
-end
-
 local mech = dofile(minetest.get_modpath("mwcp") .. "/http.lua")
 local sync_interval = nil
 local function init()
@@ -60,6 +55,11 @@ local function init()
 	mech.init(process_frompanel, data)
 end
 init()
+
+local function handle_chat(name, message)
+	local chat = {type = "chat", name = name, message = message}
+	mech.send(minetest.write_json(chat))
+end
 
 local function updatetick()
 	mech.sync()

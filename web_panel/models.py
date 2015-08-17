@@ -93,6 +93,7 @@ class ServerChatEntry(db.Model):
 	id         = db.Column(db.Integer, primary_key=True)
 	username   = db.Column(db.String(80))
 	message    = db.Column(db.Text, nullable=True)
+	webpanel   = db.Column(db.Boolean)
 	serverId   = db.Column(db.Integer, db.ForeignKey('server.id'))
 	server     = db.relationship('Server', backref = db.backref('chat', lazy='dynamic'))
 	created    = db.Column(db.DateTime)
@@ -102,3 +103,4 @@ class ServerChatEntry(db.Model):
 		self.username   = username
 		self.message    = message
 		self.created    = datetime.utcnow()
+		self.webpanel   = False

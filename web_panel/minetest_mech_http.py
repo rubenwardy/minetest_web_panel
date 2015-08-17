@@ -8,17 +8,21 @@ Isn't ideal, but is the simplist socket to implement. (python side)
 
 """
 
+from flask import *
+from flask import flash as push_message
 from web_panel import app
 import minetest, models
 
 @app.route("/api/<key>/<sid>/server_update/", methods=['GET', 'POST'])
-def api_server_update(sid, key):
+def api_server_update(key, sid):
 	server = models.Server.query.filter_by(id=sid).first()
 
 	if not server:
 		abort(404)
 
+	print(request.method)
 	if request.method == "GET":
+		print("sending")
 		toserver = minetest.flush(server, key)
 
 		if isinstance(toserver, str):
@@ -33,12 +37,16 @@ def api_server_update(sid, key):
 				retval += "\t\tusername = \"" + item['username'] + "\",\n"
 			retval += "\t},\n"
 
+		print("sent")
+
 		return retval + "}\n"
 
 	else:
-		data = request.form.get('data','')
-		if data != '':
-			mt = minetest.get_minetest_process(sid)
-			if mt:
-				mt.process_data(json.loads(data), server)
-				return "ok"
+		print("wrong)")
+		data = request.form['data']
+		mt = minetest.get_process(sid)
+		if mt and mt.check():
+			mt.process_data(json.loads(data), server)
+			return "ok"
+		else:
+			abort(404)

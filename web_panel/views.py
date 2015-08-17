@@ -168,16 +168,33 @@ def chat(sid):
 	status = minetest.status(server)
 
 	if request.method == "GET":
-		entries = models.ServerChatEntry.query.filter_by(serverId=sid).all()
+		entries = models.ServerChatEntry.query.filter_by(serverId=sid).limit(30).all()
 		return render_template('chat.html', user=current_user,
 				server=server, status=status, entries=entries)
 	else:
-		msg = request.form['msg']
-		minetest.send_chat_or_cmd(server, current_user.username, msg)
-		mt = minetest.get_minetest_process(sid)
-		if mt:
-			mt.push_to_chat("", msg})
+		minetest.send_chat_or_cmd(server, current_user.username, request.form['msg'], True)
 		return redirect(url_for('chat', sid=sid))
+
+@app.route("/api/<token>/<sid>/chat/", methods=['GET'])
+@login_required
+@ownership_required
+def chat_api(token, sid):
+	server = models.Server.query.filter_by(id=sid).first()
+	if not server:
+		abort(404)
+
+	mt = minetest.get_process(sid)
+	if not mt:
+		abort(404)
+
+	entries = models.ServerChatEntry.query.filter_by(serverId=sid).limit(30).all()
+	entries_flat = []
+	for e in entries:
+		entries_flat.append({
+			"username": e.username,
+			"message" : e.message})
+
+	return json.dumps(entries_flat)
 
 
 def isDirSafe(ch):
@@ -231,24 +248,3 @@ def settings(sid):
 		models.db.session.commit()
 
 		return redirect(url_for('dashboard', sid=sid))
-
-@app.route("/<sid>/ajax_api/", methods=['POST'])
-@login_required
-@ownership_required
-def ajax_api(sid):
-	server = models.Server.query.filter_by(id=sid).first()
-
-	if not server:
-		abort(404)
-	mt = minetest.get_minetest_process(sid)
-	if mt:
-		messages = mt.chat
-		response = make_response("/<sid>/chat/")
-		if messages == []:
-			response.status_code = 304
-		else:
-			response.set_data(json.dumps(messages))
-			mt.chat = []
-		return response
-	else:
-		abort(404)

@@ -42,10 +42,6 @@
 				<a class="button" href="{{ url_for('server_start', sid=server.id)}}">Start</a>
 			</div>
 		{% else %}
-		<script type="text/javascript" src="{{ url_for('static', filename='ajax.js') }}"></script>
-		<script type="text/javascript">
-			$( "document" ).ready(start_ajax({{ server.id }}))
-		</script>
 			<article class="chatbox box">
 				<div class="messages">
 					<table class="view">
@@ -63,6 +59,13 @@
 					</form>
 				</div>
 			</article>
+
+			<script type="text/javascript" src="{{ url_for('static', filename='chat.js') }}"></script>
+			<script type="text/javascript">
+				$(function() {
+					chat.start({{ server.id }});
+				});
+			</script>
 		{% endif %}
 	</main>
 {% endblock %}

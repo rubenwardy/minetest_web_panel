@@ -1,3 +1,7 @@
+local function warning(msg)
+	print("[WARNING] " .. msg)
+end
+
 local process_frompanel = nil
 local http          = nil
 local ltn12         = nil
@@ -31,9 +35,9 @@ end
 local function validate_response(code, resp)
 	if code ~= 200 then
 		if code == 404 then
-			minetest.log("warning", "The webpanel reports that this server does not exist!")
+			warning("The webpanel reports that this server does not exist!")
 		else
-			minetest.log("warning", "The webpanel gave an unknown HTTP response code!")
+			warning("The webpanel gave an unknown HTTP response code! (" .. code .. ")")
 		end
 		return false
 	end
@@ -45,17 +49,17 @@ local function validate_response(code, resp)
 	end
 
 	if resp == "auth" then
-		minetest.log("warning", "Authentication error when requesting commands from webpanel")
+		warning("Authentication error when requesting commands from webpanel")
 		return false
 	end
 
 	if resp == "offline" then
-		minetest.log("warning", "The webpanel reports that this server should be offline!")
+		warning("The webpanel reports that this server should be offline!")
 		return false
 	end
 
 	if string.find(resp, "return", 1) == nil then
-		minetest.log("warning", "The webpanel gave an invalid response!")
+		warning("The webpanel gave an invalid response!")
 		print(dump(resp))
 		return false
 	end
@@ -64,7 +68,7 @@ end
 
 local function sync()
 	local host   = webpanel_host .. "/"
-	local method = "get"
+	local method = "GET"
 	local path   = "api/" .. auth_key .. "/" .. server_id .. "/server_update/"
 	local params = ""
 	local resp   = {}
@@ -92,7 +96,7 @@ end
 
 local function send(data)
 	local host   = webpanel_host .. "/"
-	local method = "post"
+	local method = "POST"
 	local path   = "api/" .. auth_key .. "/" .. server_id .. "/server_update/"
 	local resp   = {}
 	local url = host .. path

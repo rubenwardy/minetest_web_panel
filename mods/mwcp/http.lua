@@ -42,12 +42,6 @@ local function validate_response(code, resp)
 		return false
 	end
 
-	if resp and resp[1] then
-		resp = resp[1]:trim()
-	else
-		return false
-	end
-
 	if resp == "auth" then
 		warning("Authentication error when requesting commands from webpanel")
 		return false
@@ -58,11 +52,46 @@ local function validate_response(code, resp)
 		return false
 	end
 
+	return true
+end
+
+local function validate_response_post(code, resp)
+	if resp and resp[1] then
+		resp = resp[1]:trim()
+	else
+		return false
+	end
+
+	if not validate_response(code, resp) then
+		return false
+	end
+
 	if string.find(resp, "return", 1) == nil then
 		warning("The webpanel gave an invalid response!")
 		print(dump(resp))
 		return false
 	end
+
+	return true
+end
+
+local function validate_response_json(code, resp)
+	if resp and resp[1] then
+		resp = resp[1]:trim()
+	else
+		return false
+	end
+
+	if not validate_response(code, resp) then
+		return false
+	end
+
+	if string.find(resp, "return", 1) == nil then
+		warning("The webpanel gave an invalid response!")
+		print(dump(resp))
+		return false
+	end
+
 	return true
 end
 
@@ -88,7 +117,7 @@ local function sync()
 	-- headers=args.headers, source=args.source,
 	-- step=args.step, proxy=args.proxy, redirect=args.redirect, create=args.create
 
-	if validate_response(code, resp) then
+	if validate_response_json(code, resp) then
 		resp = resp[1]:trim()
 		process_frompanel(minetest.deserialize(resp))
 	end
@@ -109,7 +138,7 @@ local function send(data)
 	local client, code, headers, status = http.request({url=url, sink=sink, source=source,
 	 	method=method, headers=headers})
 
-	validate_response(code, resp)
+	validate_response_post(code, resp)
 end
 
 return {

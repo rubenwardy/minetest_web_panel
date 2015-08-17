@@ -22,7 +22,6 @@ def api_server_update(key, sid):
 
 	print(request.method)
 	if request.method == "GET":
-		print("sending")
 		toserver = minetest.flush(server, key)
 
 		if isinstance(toserver, str):
@@ -37,12 +36,9 @@ def api_server_update(key, sid):
 				retval += "\t\tusername = \"" + item['username'] + "\",\n"
 			retval += "\t},\n"
 
-		print("sent")
-
 		return retval + "}\n"
 
 	else:
-		print("wrong)")
 		data = request.form['data']
 		mt = minetest.get_process(sid)
 		if mt and mt.check():

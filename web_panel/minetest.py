@@ -24,7 +24,7 @@ def check_processes():
 	print("Checking servers!")
 	for key in servers.keys():
 		value = servers[key]
-		print("Checking " + key)
+		print("Checking server # " + str(key))
 		if value.check():
 			print("- ok!")
 		else:
@@ -189,9 +189,8 @@ class MinetestProcess:
 #
 
 def get_process(sid):
-	key = "sid_" + str(sid)
-	if key in servers:
-		mt = servers[key]
+	if sid in servers:
+		mt = servers[sid]
 		if mt.check():
 			return mt
 
@@ -260,7 +259,7 @@ def start(server):
 	# Start Process
 	log = open('/tmp/blah.txt', 'a')
 	proc = subprocess.Popen(params)
-	servers["sid_" + str(server.id)] = MinetestProcess(server.id, proc,\
+	servers[server.id] = MinetestProcess(server.id, proc,\
 			server.port, debuglog, key)
 	server.is_on = True
 	db.session.commit()
@@ -342,7 +341,7 @@ def flush(server, key):
 	check_processes()
 
 	try:
-		mt = servers["sid_" + str(server.id)]
+		mt = servers[server.id]
 
 		if mt and mt.check():
 			if mt.key != key:

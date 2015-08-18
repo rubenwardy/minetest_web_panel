@@ -338,17 +338,13 @@ def send_chat_or_cmd(server, player, msg, add_to_log):
 
 
 def flush(server, key):
-	check_processes()
-
-	try:
-		mt = servers[server.id]
-
-		if mt and mt.check():
-			if mt.key != key:
-				return "auth"
-
-			retval = mt.toserver
-			mt.toserver = []
-			return retval
-	except KeyError:
+	mt = get_process(server.id)
+	if not mt:
 		return "offline"
+
+	if mt.key != key:
+		return "auth"
+
+	retval = mt.toserver
+	mt.toserver = []
+	return retval

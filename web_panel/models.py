@@ -67,10 +67,10 @@ class Server(db.Model):
 		log = self.debuglog or "debug.txt"
 		if app.config['SANDBOX']:
 			log = os.path.normpath('/' + log).lstrip('/')
-			log = os.path.join(self.getWorldPath(), "server", log)
+			log = os.path.join(self.getWorldPath(), "webpanel", log)
 			return log
 		else:
-			log = os.path.join(self.getWorldPath(), "server", log)
+			log = os.path.join(self.getWorldPath(), "webpanel", log)
 			return log
 
 class ServerLogEntry(db.Model):

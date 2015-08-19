@@ -234,18 +234,22 @@ def start(server):
 	f.write("\n}\n")
 	f.close()
 
+	# Create directories in debug path
+	debuglog = server.getDebugLogPath()
+	if not os.path.exists(os.path.dirname(debuglog)):
+		os.makedirs(os.path.dirname(debuglog))
+	if not os.path.exists(server.getWorldPath() + "/webpanel/"):
+		os.makedirs(server.getWorldPath() + "/webpanel/")
+
 	# Write minetest.conf
 	conf = Conf()
 	#conf.set("server_announce", "true")
 	conf.set("server_name", server.name)
 	conf.set("server_description", server.desc)
 	conf.set("name", server.owner.username)
-	conf.write(server.getWorldPath() + "/minetest.conf")
-
-	# Create directories in debug path
-	debuglog = server.getDebugLogPath()
-	if not os.path.exists(os.path.dirname(debuglog)):
-		os.makedirs(os.path.dirname(debuglog))
+	if os.path.isfile(server.getWorldPath() + "/minetest.conf"):
+		conf.read(server.getWorldPath() + "/minetest.conf")
+	conf.write(server.getWorldPath() + "/webpanel/minetest.conf")
 
 	# Build Parameters
 	params = [app.config['MINETEST_EXE']]
@@ -257,7 +261,7 @@ def start(server):
 	params.append("--logfile")
 	params.append(debuglog)
 	params.append("--config")
-	params.append(server.getWorldPath() + "/minetest.conf")
+	params.append(server.getWorldPath() + "/webpanel/minetest.conf")
 	params.append("--port")
 	params.append(str(server.port))
 

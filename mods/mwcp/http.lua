@@ -124,16 +124,17 @@ local function sync()
 end
 
 local function send(data)
+	local json = minetest.write_json(data)
 	local host   = webpanel_host .. "/"
 	local method = "POST"
 	local path   = "api/" .. auth_key .. "/" .. server_id .. "/server_update/"
 	local resp   = {}
 	local url = host .. path
 	local headers = {}
-	headers['Content-Length'] = #'data=' + #data
+	headers['Content-Length'] = #'data=' + #json
 	headers['Content-Type'] = 'application/x-www-form-urlencoded'
 	local sink = ltn12.sink.table(resp)
-	local source = ltn12.source.string('data=' .. data)
+	local source = ltn12.source.string('data=' .. json)
 
 	local client, code, headers, status = http.request({url=url, sink=sink, source=source,
 	 	method=method, headers=headers})

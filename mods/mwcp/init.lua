@@ -58,7 +58,7 @@ init()
 
 local function handle_chat(name, message)
 	local chat = {type = "chat", name = name, message = message}
-	mech.send(minetest.write_json(chat))
+	mech.send(chat)
 end
 
 local function updatetick()

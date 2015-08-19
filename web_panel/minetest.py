@@ -124,9 +124,15 @@ class MinetestProcess:
 		print("Process stopped with " + str(retval))
 		return False
 
-	def kill(self):
+	def kill(self, server):
 		print("Killing " + str(self.id))
 		self.process.terminate()
+
+		if not server:
+			server = Server.query.filter_by(id=self.id).first()
+
+		server.is_on = False
+		db.session.commit()
 
 	def stop(self, username):
 		self.send({
@@ -280,22 +286,6 @@ def start(server):
 	db.session.commit()
 	return proc.poll() is None
 
-def stop(server, username):
-	mt = get_process(server.id)
-	if not mt:
-		return False
-
-	mt.stop(username)
-
-def kill(server):
-	mt = get_process(server.id)
-	if not mt:
-		return False
-
-	mt.kill()
-	server.is_on = False
-	db.session.commit()
-
 def socket_is_up(address, port):
 	import sys, time, socket
 
@@ -335,22 +325,6 @@ def status(server):
 			return "blocked"
 		else:
 			return "off"
-
-def get_log(server, lines, inc_all_sessions):
-	mt = get_process(server.id)
-	if not mt:
-		return False
-
-	return mt.getEndOfLog(lines, inc_all_sessions)
-
-def send_chat_or_cmd(server, player, msg, add_to_log):
-	mt = get_process(server.id)
-	if not mt:
-		return False
-
-	print(player + " sends to " + server.name  + " " + msg)
-	mt.send_chat_or_cmd(server, player, msg, add_to_log)
-
 
 def flush(server, key):
 	mt = get_process(server.id)

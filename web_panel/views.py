@@ -116,19 +116,26 @@ def debuglog(sid):
 
 	status = minetest.status(server)
 
+	proc = minetest.get_process(server.id)
+	log = None
+	if proc:
+		log = proc.getEndOfLog(server, n, i)
+
 	return render_template('debuglog.html', user=current_user,
-			server=server, status=status, debuglog=minetest.get_log(server, n, i), n=n, inc=i)
+			server=server, status=status, debuglog=log, n=n, inc=i)
 
 @app.route("/<sid>/start/")
 @login_required
 @ownership_required
 def server_start(sid):
 	server = models.Server.query.filter_by(id=sid).first()
-
 	if not server:
 		abort(404)
 
-	minetest.kill(server)
+	proc = minetest.get_process(server.id)
+	if proc:
+		proc.kill(server)
+
 	minetest.start(server)
 	return redirect(url_for('dashboard', sid=sid))
 
@@ -137,11 +144,13 @@ def server_start(sid):
 @ownership_required
 def server_stop(sid):
 	server = models.Server.query.filter_by(id=sid).first()
-
 	if not server:
 		abort(404)
 
-	minetest.stop(server, current_user.username)
+	proc = minetest.get_process(server.id)
+	if proc:
+		proc.stop(current_user.username)
+
 	return redirect(url_for('dashboard', sid=sid))
 
 @app.route("/<sid>/kill/")
@@ -149,11 +158,13 @@ def server_stop(sid):
 @ownership_required
 def server_kill(sid):
 	server = models.Server.query.filter_by(id=sid).first()
-
 	if not server:
 		abort(404)
 
-	minetest.kill(server)
+	proc = minetest.get_process(server.id)
+	if proc:
+		proc.kill(server)
+
 	return redirect(url_for('dashboard', sid=sid))
 
 @app.route("/<sid>/chat/", methods=['GET', 'POST'])
@@ -161,7 +172,6 @@ def server_kill(sid):
 @ownership_required
 def chat(sid):
 	server = models.Server.query.filter_by(id=sid).first()
-
 	if not server:
 		abort(404)
 
@@ -172,7 +182,10 @@ def chat(sid):
 		return render_template('chat.html', user=current_user,
 				server=server, status=status, entries=entries)
 	else:
-		minetest.send_chat_or_cmd(server, current_user.username, request.form['msg'], True)
+		proc = minetest.get_process(server.id)
+		if proc:
+			proc.send_chat_or_cmd(server, current_user.username, request.form['msg'], True)
+
 		return redirect(url_for('chat', sid=sid))
 
 @app.route("/api/<token>/<sid>/chat/", methods=['GET'])
@@ -181,10 +194,6 @@ def chat(sid):
 def chat_api(token, sid):
 	server = models.Server.query.filter_by(id=sid).first()
 	if not server:
-		abort(404)
-
-	mt = minetest.get_process(sid)
-	if not mt:
 		abort(404)
 
 	entries = models.ServerChatEntry.query.filter_by(serverId=sid).limit(30).all()
@@ -205,7 +214,6 @@ def isDirSafe(ch):
 @ownership_required
 def settings(sid):
 	server = models.Server.query.filter_by(id=sid).first()
-
 	if not server:
 		abort(404)
 

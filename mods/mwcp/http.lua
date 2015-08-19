@@ -86,7 +86,7 @@ local function validate_response_json(code, resp)
 		return false
 	end
 
-	if string.find(resp, "return", 1) == nil then
+	if string.find(resp, "%[", 1) == nil then
 		warning("The webpanel gave an invalid response!")
 		print(dump(resp))
 		return false
@@ -119,7 +119,7 @@ local function sync()
 
 	if validate_response_json(code, resp) then
 		resp = resp[1]:trim()
-		process_frompanel(minetest.deserialize(resp))
+		process_frompanel(minetest.parse_json(resp))
 	end
 end
 

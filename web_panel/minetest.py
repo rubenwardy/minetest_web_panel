@@ -16,7 +16,7 @@ def on_exit():
 	print("minetest.on_exit() : Shutting down...")
 
 	for _, server in servers.iteritems():
-		server.kill()
+		server.raw_kill()
 
 
 atexit.register(on_exit)
@@ -124,9 +124,12 @@ class MinetestProcess:
 		print("Process stopped with " + str(retval))
 		return False
 
-	def kill(self, server):
+	def raw_kill(self):
 		print("Killing " + str(self.id))
 		self.process.terminate()
+
+	def kill(self, server):
+		self.raw_kill()
 
 		if not server:
 			server = Server.query.filter_by(id=self.id).first()
@@ -325,15 +328,3 @@ def status(server):
 			return "blocked"
 		else:
 			return "off"
-
-def flush(server, key):
-	mt = get_process(server.id)
-	if not mt:
-		return "offline"
-
-	if mt.key != key:
-		return "auth"
-
-	retval = mt.toserver
-	mt.toserver = []
-	return retval

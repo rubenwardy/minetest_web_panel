@@ -119,7 +119,7 @@ def debuglog(sid):
 	proc = minetest.get_process(server.id)
 	log = None
 	if proc:
-		log = proc.getEndOfLog(server, n, i)
+		log = proc.getEndOfLog(n, i)
 
 	return render_template('debuglog.html', user=current_user,
 			server=server, status=status, debuglog=log, n=n, inc=i)

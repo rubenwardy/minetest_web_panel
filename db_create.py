@@ -10,7 +10,7 @@ user = User("admin", "pass")
 user.is_admin = True
 db.session.add(user)
 
-server = Server("Server 1", "servertest")
+server = Server(user, "Server 1", "servertest")
 db.session.add(server)
 db.session.commit()
 

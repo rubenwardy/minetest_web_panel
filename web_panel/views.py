@@ -217,6 +217,7 @@ def settings(sid):
 	else:
 		# Get values
 		name = request.form['name'].strip()
+		desc = request.form['desc'].strip()
 		port = request.form['port'].strip()
 		worldname = request.form['worldname'].strip()
 		debuglog = request.form['debug'].strip()
@@ -242,6 +243,7 @@ def settings(sid):
 		print(name, port, worldname, debuglog)
 
 		server.name = name
+		server.desc = desc
 		server.port = port
 		server.worldname = worldname
 		server.debuglog = debuglog

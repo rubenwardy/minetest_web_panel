@@ -40,9 +40,12 @@ class Server(db.Model):
 	id        = db.Column(db.Integer, primary_key=True)
 	name      = db.Column(db.String(15), unique=True)
 	worldname = db.Column(db.String(30))
-	debuglog  = db.Column(db.String(30))
-	port      = db.Column(db.Integer, unique=True)
-	is_on     = db.Column(db.Boolean)
+	debuglog  = db.Column(db.String(30), default="debug.txt")
+	desc      = db.Column(db.String(64), default="")
+	port      = db.Column(db.Integer, unique=True, default=30000)
+	is_on     = db.Column(db.Boolean, default=False)
+	ownerId   = db.Column(db.Integer, db.ForeignKey('user.id'))
+	owner     = db.relationship('User', backref = db.backref('servers', lazy='dynamic'))
 
 	@validates('worldname')
 	def validate_worldname(self, key, address):
@@ -50,11 +53,10 @@ class Server(db.Model):
 		assert not bool(re.compile(r'[^a-zA-Z0-9_]').search(address))
 		return address
 
-	def __init__(self, name, worldname):
+	def __init__(self, owner, name, worldname):
+		self.owner = owner
 		self.name = name
 		self.worldname = worldname
-		self.debuglog = "debug.txt"
-		self.port = 30000
 
 	def getWorldPath(self):
 		return app.config['MINETEST_WORLDS'] + self.worldname

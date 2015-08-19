@@ -51,6 +51,15 @@
 						</td>
 					</tr>
 					<tr>
+						<td>Description:</td>
+						<td>
+							<input max=64 type="text" name="desc" value="{{ server.desc }}" required />
+						</td>
+						<td>
+							Any valid characters.
+						</td>
+					</tr>
+					<tr>
 						<td>Port:</td>
 						<td>
 							<input type="text" name="port" value="{{ server.port or 30000 }}" />

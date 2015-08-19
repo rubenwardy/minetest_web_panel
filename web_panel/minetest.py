@@ -1,4 +1,5 @@
 from web_panel import app
+from web_panel.minetest_conf import Conf
 from web_panel.models import db, Server, ServerLogEntry, ServerChatEntry
 import subprocess, atexit
 
@@ -201,31 +202,17 @@ def start(server):
 	if mt:
 		return False
 
-	# Build Parameters
-	debuglog = server.getDebugLogPath()
-	params = [app.config['MINETEST_EXE']]
-	additional_params = app.config['MINETEST_EXE_PARAMS'] or []
-	for param in additional_params:
-		params.append(param)
-	params.append("--world")
-	params.append(server.getWorldPath())
-	params.append("--logfile")
-	params.append(debuglog)
-	params.append("--port")
-	params.append(str(server.port))
+	# Install mods
+	import shutil, os
+	worldmods = server.getWorldPath() + "/worldmods/"
+	if not os.path.exists(worldmods):
+		os.makedirs(worldmods)
+	if os.path.exists(worldmods + "mwcp/"):
+		shutil.rmtree(worldmods + "mwcp/")
+	shutil.copytree(os.path.abspath(os.path.dirname(__file__) +\
+		"/../mods/mwcp/"), worldmods + "mwcp/")
 
-	# Create directories in debug path
-	import os
-	if not os.path.exists(os.path.dirname(debuglog)):
-		os.makedirs(os.path.dirname(debuglog))
-
-	# Debug: Print Parameters
-	outval = ""
-	for param in params:
-		outval += " " + param
-	print(outval.strip())
-
-	# Write files
+	# Write mwcp mod configuration
 	import uuid
 	key = uuid.uuid4().hex
 	f = open(server.getWorldPath() + "/webpanel.txt", "w")
@@ -247,14 +234,38 @@ def start(server):
 	f.write("\n}\n")
 	f.close()
 
-	# Copy mods
-	import shutil
-	worldmods = server.getWorldPath() + "/worldmods/"
-	if not os.path.exists(worldmods):
-		os.makedirs(worldmods)
-	if os.path.exists(worldmods + "mwcp/"):
-		shutil.rmtree(worldmods + "mwcp/")
-	shutil.copytree(os.path.abspath(os.path.dirname(__file__) + "/../mods/mwcp/"), worldmods + "mwcp/")
+	# Write minetest.conf
+	conf = Conf()
+	#conf.set("server_announce", "true")
+	conf.set("server_name", server.name)
+	conf.set("server_description", server.desc)
+	conf.set("name", server.owner.username)
+	conf.write(server.getWorldPath() + "/minetest.conf")
+
+	# Create directories in debug path
+	debuglog = server.getDebugLogPath()
+	if not os.path.exists(os.path.dirname(debuglog)):
+		os.makedirs(os.path.dirname(debuglog))
+
+	# Build Parameters
+	params = [app.config['MINETEST_EXE']]
+	additional_params = app.config['MINETEST_EXE_PARAMS'] or []
+	for param in additional_params:
+		params.append(param)
+	params.append("--world")
+	params.append(server.getWorldPath())
+	params.append("--logfile")
+	params.append(debuglog)
+	params.append("--config")
+	params.append(server.getWorldPath() + "/minetest.conf")
+	params.append("--port")
+	params.append(str(server.port))
+
+	# Debug: Print Parameters
+	outval = ""
+	for param in params:
+		outval += " " + param
+	print(outval.strip())
 
 	# Start Process
 	log = open('/tmp/blah.txt', 'a')
